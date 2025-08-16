@@ -1,0 +1,214 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > JournalEntryController</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.example.JournalApp.controller</a>
+</div>
+
+<h1>Coverage Summary for Class: JournalEntryController (com.example.JournalApp.controller)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">JournalEntryController</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    16.7%
+  </span>
+  <span class="absValue">
+    (1/6)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/10)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    4%
+  </span>
+  <span class="absValue">
+    (1/25)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.example.JournalApp.controller;
+&nbsp;
+&nbsp;import com.example.JournalApp.entity.JournalEntry;
+&nbsp;import com.example.JournalApp.entity.User;
+&nbsp;import com.example.JournalApp.service.JournalEntryService;
+&nbsp;import com.example.JournalApp.service.UserService;
+&nbsp;import org.bson.types.ObjectId;
+&nbsp;import org.springframework.beans.factory.annotation.Autowired;
+&nbsp;import org.springframework.http.HttpStatus;
+&nbsp;import org.springframework.http.ResponseEntity;
+&nbsp;//import org.springframework.security.core.Authentication;
+&nbsp;//import org.springframework.security.core.context.SecurityContextHolder;
+&nbsp;import org.springframework.web.bind.annotation.*;
+&nbsp;
+&nbsp;
+&nbsp;import java.util.List;
+&nbsp;import java.util.Optional;
+&nbsp;
+&nbsp;
+&nbsp;@RestController
+&nbsp;@RequestMapping(&quot;/journal&quot;)
+<b class="fc">&nbsp;public class JournalEntryController {</b>
+&nbsp;
+&nbsp;    @Autowired
+&nbsp;    private UserService userService;
+&nbsp;    @Autowired
+&nbsp;    private JournalEntryService journalEntryService;
+&nbsp;
+&nbsp;    @GetMapping(&quot;/all&quot;)
+&nbsp;    public ResponseEntity&lt;?&gt; getAllJournalEntries() {
+<b class="nc">&nbsp;        List&lt;JournalEntry&gt; all = journalEntryService.getAllJournalEntries();</b>
+<b class="nc">&nbsp;        return all.isEmpty()</b>
+<b class="nc">&nbsp;                ? new ResponseEntity&lt;&gt;(HttpStatus.NOT_FOUND)</b>
+<b class="nc">&nbsp;                : new ResponseEntity&lt;&gt;(all, HttpStatus.OK);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Get journal entries for a specific user
+&nbsp;     */
+&nbsp;    @GetMapping(&quot;/user/{userName}&quot;)
+&nbsp;    public ResponseEntity&lt;?&gt; getAllJournalEntriesOfUser(@PathVariable String userName) {
+<b class="nc">&nbsp;        User user = userService.findByUserName(userName);</b>
+<b class="nc">&nbsp;        if (user != null) {</b>
+<b class="nc">&nbsp;            List&lt;JournalEntry&gt; all = user.getJournalEntries();</b>
+<b class="nc">&nbsp;            if (all != null &amp;&amp; !all.isEmpty()) {</b>
+<b class="nc">&nbsp;                return new ResponseEntity&lt;&gt;(all, HttpStatus.OK);</b>
+&nbsp;            }
+&nbsp;        }
+<b class="nc">&nbsp;        return new ResponseEntity&lt;&gt;(HttpStatus.NOT_FOUND);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Create a new entry for a user
+&nbsp;     */
+&nbsp;    @PostMapping(&quot;/{userName}&quot;)
+&nbsp;    public ResponseEntity&lt;JournalEntry&gt; createEntry(@PathVariable String userName,
+&nbsp;                                                    @RequestBody JournalEntry myEntry) {
+&nbsp;        try {
+<b class="nc">&nbsp;            journalEntryService.saveEntry(myEntry, userName);</b>
+<b class="nc">&nbsp;            return new ResponseEntity&lt;&gt;(myEntry, HttpStatus.CREATED);</b>
+&nbsp;        } catch (Exception e) {
+<b class="nc">&nbsp;            return new ResponseEntity&lt;&gt;(HttpStatus.BAD_REQUEST);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Get a journal entry by ID
+&nbsp;     */
+&nbsp;    @GetMapping(&quot;/id/{myId}&quot;)
+&nbsp;    public ResponseEntity&lt;?&gt; getJournalEntryById(@PathVariable String myId) {
+&nbsp;        try {
+<b class="nc">&nbsp;            ObjectId objectId = new ObjectId(myId);</b>
+<b class="nc">&nbsp;            Optional&lt;JournalEntry&gt; entry = journalEntryService.getJournalEntryById(objectId);</b>
+<b class="nc">&nbsp;            return entry.map(journalEntry -&gt; new ResponseEntity&lt;&gt;(journalEntry, HttpStatus.OK))</b>
+<b class="nc">&nbsp;                    .orElseGet(() -&gt; new ResponseEntity&lt;&gt;(HttpStatus.NOT_FOUND));</b>
+&nbsp;        } catch (IllegalArgumentException e) {
+<b class="nc">&nbsp;            return new ResponseEntity&lt;&gt;(&quot;Invalid ID format&quot;, HttpStatus.BAD_REQUEST);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Delete a journal entry by ID for a specific user
+&nbsp;     */
+&nbsp;    @DeleteMapping(&quot;/id/{myId}/{userName}&quot;)
+&nbsp;    public ResponseEntity&lt;?&gt; deleteJournalEntryById(@PathVariable String myId,
+&nbsp;                                                    @PathVariable String userName) {
+&nbsp;        try {
+<b class="nc">&nbsp;            ObjectId objectId = new ObjectId(myId);</b>
+<b class="nc">&nbsp;            boolean deleted = journalEntryService.deleteJournalById(objectId, userName);</b>
+<b class="nc">&nbsp;            return deleted</b>
+<b class="nc">&nbsp;                    ? ResponseEntity.noContent().build()</b>
+<b class="nc">&nbsp;                    : ResponseEntity.notFound().build();</b>
+&nbsp;        } catch (IllegalArgumentException e) {
+<b class="nc">&nbsp;            return new ResponseEntity&lt;&gt;(&quot;Invalid ID format&quot;, HttpStatus.BAD_REQUEST);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;}
+&nbsp;
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-08-16 22:22</div>
+</div>
+</body>
+</html>

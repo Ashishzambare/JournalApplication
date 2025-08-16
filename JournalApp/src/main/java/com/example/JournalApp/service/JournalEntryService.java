@@ -31,7 +31,7 @@ public class JournalEntryService {
             journalEntry.setDate(LocalDateTime.now());
             JournalEntry saved = journalEntryRepository.save(journalEntry);
             user.getJournalEntries().add(saved);
-            userService.saveUser(user);
+            userService.saveNewUser(user);
         } catch (Exception e) {
             throw new RuntimeException("An error occurred while saving the entry.", e);
         }
@@ -52,7 +52,7 @@ public class JournalEntryService {
         User user = userService.findByUserName(userName);
         if (user != null && user.getJournalEntries() != null) {
             user.getJournalEntries().clear();
-            userService.saveUser(user); // save the updated user without entries
+            userService.saveNewUser(user); // save the updated user without entries
         }
     }
 
@@ -63,7 +63,7 @@ public class JournalEntryService {
             boolean removed = user.getJournalEntries().removeIf(x -> x.getId().equals(id));
 
             if (removed) {
-                userService.saveUser(user);
+                userService.saveNewUser(user);
                 journalEntryRepository.deleteById(id);
             }
 

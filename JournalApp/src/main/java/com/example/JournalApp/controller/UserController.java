@@ -22,14 +22,9 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-    @GetMapping
-    public List<User> getAllUsers() {
-        return userService.getAll();
-    }
-
     @PostMapping
     public void createUser(@RequestBody User user) {
-        userService.saveUser(user);
+        userService.saveNewUser(user);
     }
 
     @PutMapping("/{userName}")
@@ -38,7 +33,7 @@ public class UserController {
         if (userInDb != null) {
             userInDb.setUserName(user.getUserName());
             userInDb.setPassword(user.getPassword());
-            userService.saveUser(userInDb);
+            userService.saveNewUser(userInDb);
         }
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }

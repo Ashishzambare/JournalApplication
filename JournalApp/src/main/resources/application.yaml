@@ -1,0 +1,11 @@
+spring:
+  application:
+    name: JournalApp
+
+  data:
+    mongodb:
+      uri: mongodb+srv://srkfb555:Ashish1234@journaldb.q9yapgq.mongodb.net/?retryWrites=true&w=majority&appName=Journaldb
+      database: journaldb
+      auto-index-creation: true
+
+
